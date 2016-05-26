@@ -1,7 +1,7 @@
 # Creates a base ubuntu image with serf and dnsmasq
-FROM ubuntu:15.04
+FROM ubuntu:latest
 
-MAINTAINER KiwenLau <kiwenlau@gmail.com>
+MAINTAINER Yingzhi Wu <yiw376@eng.ucsd.edu>
 
 RUN apt-get update && \
 apt-get install -y unzip curl dnsmasq
@@ -10,9 +10,9 @@ apt-get install -y unzip curl dnsmasq
 ADD dnsmasq/* /etc/
 
 # install serf
-RUN curl -Lso serf.zip https://dl.bintray.com/mitchellh/serf/0.5.0_linux_amd64.zip && \
-unzip serf.zip -d /bin && \
-rm serf.zip
+RUN curl -Lso serf.zip https://releases.hashicorp.com/serf/0.7.0/serf_0.7.0_linux_amd64.zip && \
+    unzip serf.zip -d /bin && \
+    rm serf.zip
 
 # configure serf
 ENV SERF_CONFIG_DIR /etc/serf
