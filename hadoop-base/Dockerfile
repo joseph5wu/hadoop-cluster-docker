@@ -25,5 +25,24 @@ RUN mkdir /var/run/sshd && \
 # Install Hadoop 2.7.2
 RUN curl -s http://apache.spinellicreations.com/hadoop/common/hadoop-2.7.2/hadoop-2.7.2.tar.gz | tar -xz -C /usr/local/ && \
     ln -s /usr/local/hadoop-2.7.2 /usr/local/hadoop && \
-    mv /usr/local/bashrc ~/.bashrc && \
     mv /usr/local/hadoop-env.sh /usr/local/hadoop/etc/hadoop/hadoop-env.sh
+
+ENV HADOOP_INSTALL /usr/local/hadoop
+ENV PATH $PATH:$HADOOP_INSTALL/bin:$HADOOP_INSTALL/sbin
+ENV HADOOP_HOME $HADOOP_INSTALL
+ENV HADOOP_MAPRED_HOME $HADOOP_INSTALL
+ENV HADOOP_COMMON_HOME $HADOOP_INSTALL
+ENV HADOOP_HDFS_HOME $HADOOP_INSTALL
+ENV HADOOP_CONF_DIR $HADOOP_INSTALL/etc/hadoop
+ENV YARN_HOME $HADOOP_INSTALL
+ENV YARN_CONF_DIR $HADOOP_INSTALL/etc/hadoop
+
+RUN echo '# Hadoop' >> ~/.bashrc && \
+    echo "export HADOOP_INSTALL=$HADOOP_INSTALL" >> ~/.bashrc && \
+    echo 'export PATH=$PATH:$HADOOP_INSTALL/bin:$HADOOP_INSTALL/sbin' >> ~/.bashrc && \
+    echo 'export HADOOP_MAPRED_HOME=$HADOOP_INSTALL' >> ~/.bashrc && \
+    echo 'export HADOOP_CONF_DIR=$HADOOP_INSTALL/etc/hadoop' >> ~/.bashrc && \
+    echo 'export HADOOP_COMMON_HOME=$HADOOP_INSTALL' >> ~/.bashrc && \
+    echo 'export HADOOP_HDFS_HOME=$HADOOP_INSTALL' >> ~/.bashrc && \
+    echo 'export YARN_HOME=$HADOOP_INSTALL' >> ~/.bashrc && \
+    echo 'export YARN_CONF_DIR=$HADOOP_INSTALL/etc/hadoop' >> ~/.bashrc
