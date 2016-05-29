@@ -33,7 +33,7 @@ echo "### Step2: Set up master container ###"
 # delete old master container and start new master container
 docker stop master &> /dev/null
 docker rm -f master &> /dev/null
-docker run -d -t --dns $DNS -P --name $MASTER_CONTAINER -h $MASTER_HOST -w /root $MASTER_IMAGE &> /dev/null
+docker run -d -p 50070:50070 -p 8088:8088 -t --dns $DNS -P --name $MASTER_CONTAINER -h $MASTER_HOST -w /root $MASTER_IMAGE
 
 # get the IP address of master container
 MASTER_IP=$(docker inspect --format="{{.NetworkSettings.IPAddress}}" $MASTER_CONTAINER)
@@ -50,12 +50,31 @@ do
 	i=$(( $i + 1 ))
 done
 
-sleep 5
-echo "### Step4: Start hadoop in master container ###"
-# start hadoop in master container
-docker exec master ./start-hadoop.sh
+# sleep 15
+# echo "### Step4: Start hadoop in master container ###"
+# docker exec master ./start-hadoop.sh &> /dev/null
+#
+echo "### Step4: Wait for hadoop up ###"
+sleep 20
+i=1
+while [ $i -lt 10 ]
+do
+    LIVE_NODES=$(docker exec master hdfs dfsadmin -report | grep "Live datanodes (4)" | wc -l)
+    if [ $LIVE_NODES = "1" ]; then
+        echo "hadoop is ready"
+        break
+    else
+        echo $(docker exec master hdfs dfsadmin -report | grep "Live datanodes")
+        i=$(( $i + 1 ))
+        sleep 5
+    fi
+done
+if [ $i = "10" ]; then
+    echo "hadoop can't be up, exit"
+    exit
+fi
 
-sleep 15
 echo "### Step5: Run word count test ###"
-# run word count
 docker exec master ./run-wordcount.sh
+
+# docker exec master bash
