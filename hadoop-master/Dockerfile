@@ -7,6 +7,8 @@ ADD files/run-wordcount.sh /tmp/run-wordcount.sh
 RUN mv /tmp/run-wordcount.sh ~/run-wordcount.sh && \
     chmod +x ~/run-wordcount.sh
 
+ADD files/slaves $HADOOP_PREFIX/etc/hadoop/slaves
+
 ADD files/bootstrap.sh /etc/bootstrap.sh
 RUN chown root:root /etc/bootstrap.sh
 RUN chmod 700 /etc/bootstrap.sh
