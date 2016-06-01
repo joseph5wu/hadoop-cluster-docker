@@ -75,6 +75,6 @@ if [ $i = "10" ]; then
 fi
 
 echo "### Step5: Run word count test ###"
-#docker exec master ./run-wordcount.sh
+docker exec master ./run-wordcount.sh
 
-# docker exec master bash
+# docker exec -it master /bin/bash
