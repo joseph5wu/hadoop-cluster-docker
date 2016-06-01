@@ -3,13 +3,13 @@ FROM yiw376/hadoop-base
 
 MAINTAINER Yingzhi Wu <yiw376@eng.ucsd.edu>
 
-ADD files/run-wordcount.sh /tmp/run-wordcount.sh
-ADD files/wordCount/* /tmp/wordCount/
+ADD files/run-bigramCount.sh /tmp/run-bigramCount.sh
+ADD files/bigramCount/* /tmp/bigramCount/
 
-RUN mv /tmp/wordCount ~/wordCount 
+RUN mv /tmp/bigramCount ~/bigramCount 
 
-RUN mv /tmp/run-wordcount.sh ~/run-wordcount.sh && \
-    chmod +x ~/run-wordcount.sh
+RUN mv /tmp/run-bigramCount.sh ~/run-bigramCount.sh && \
+    chmod +x ~/run-bigramCount.sh
 
 ADD files/slaves $HADOOP_PREFIX/etc/hadoop/slaves
 

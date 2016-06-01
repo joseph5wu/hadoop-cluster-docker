@@ -74,7 +74,7 @@ if [ $i = "10" ]; then
     exit
 fi
 
-echo "### Step5: Run word count test ###"
-docker exec master ./run-wordcount.sh
+echo "### Step5: Run bigram count test ###"
+docker exec master ./run-bigramCount.sh
 
 # docker exec -it master /bin/bash

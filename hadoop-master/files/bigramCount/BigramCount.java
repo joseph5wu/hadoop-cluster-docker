@@ -1,4 +1,4 @@
-package wordCount;
+package bigramCount;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -17,7 +17,7 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
-public class WordCount {
+public class BigramCount {
     final static String OUTPUT_FILENAME = "/part-r-00000";
     final static String BIGRAM_OUT = "/bigram_out";
     final static String REVBIGRAM_OUT = "/revBigram_out";
@@ -39,7 +39,7 @@ public class WordCount {
         List<String> bigramList = new LinkedList<String>();
 
         // read sorted bi-gram from HDFS
-        Path pt = new Path(args[1] + WordCount.REVBIGRAM_OUT + WordCount.OUTPUT_FILENAME);
+        Path pt = new Path(args[1] + BigramCount.REVBIGRAM_OUT + BigramCount.OUTPUT_FILENAME);
         FileSystem fs = FileSystem.get(new Configuration());
         BufferedReader br = new BufferedReader(new InputStreamReader(fs.open(pt)));
         
@@ -73,7 +73,7 @@ public class WordCount {
         for (; sum > 0 && i < countList.size(); i++) {
             sum -= countList.get(i);
         }
-        System.out.println("(3) We need " + i + " bi-grams to add up to 10% of all bi-grams");
+        System.out.println("(3) We need the top-" + i + " bi-grams to add up to 10% of the total number of bi-grams");
 
         br.close();
         fs.close();        
@@ -87,7 +87,7 @@ class BigramGen extends Configured implements Tool {
         Configuration conf = this.getConf();
         
         Job job = Job.getInstance(conf);
-        job.setJarByClass(WordCount.class);
+        job.setJarByClass(BigramCount.class);
  
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
@@ -100,7 +100,7 @@ class BigramGen extends Configured implements Tool {
         job.setOutputFormatClass(TextOutputFormat.class);
         
         FileInputFormat.addInputPath(job, new Path(args[0]));
-        FileOutputFormat.setOutputPath(job, new Path(args[1]+WordCount.BIGRAM_OUT));
+        FileOutputFormat.setOutputPath(job, new Path(args[1]+BigramCount.BIGRAM_OUT));
  
         return job.waitForCompletion(true) ? 0 : 1;
     }
@@ -113,7 +113,7 @@ class ReverseMap extends Configured implements Tool {
         Configuration conf = this.getConf();
         
         Job job = Job.getInstance(conf);
-        job.setJarByClass(WordCount.class);
+        job.setJarByClass(BigramCount.class);
  
         job.setOutputKeyClass(LongWritable.class);
         job.setOutputValueClass(Text.class);
@@ -127,8 +127,8 @@ class ReverseMap extends Configured implements Tool {
         job.setInputFormatClass(TextInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
         
-        FileInputFormat.addInputPath(job, new Path(args[1]+WordCount.BIGRAM_OUT+WordCount.OUTPUT_FILENAME));
-        FileOutputFormat.setOutputPath(job, new Path(args[1]+WordCount.REVBIGRAM_OUT));
+        FileInputFormat.addInputPath(job, new Path(args[1]+BigramCount.BIGRAM_OUT+BigramCount.OUTPUT_FILENAME));
+        FileOutputFormat.setOutputPath(job, new Path(args[1]+BigramCount.REVBIGRAM_OUT));
  
         return job.waitForCompletion(true) ? 0 : 1;
     }
