@@ -38,6 +38,7 @@ docker run -d -p 50070:50070 -p 8088:8088 -t --dns $DNS -P --name $MASTER_CONTAI
 # get the IP address of master container
 MASTER_IP=$(docker inspect --format="{{.NetworkSettings.IPAddress}}" $MASTER_CONTAINER)
 
+sleep 20
 echo "### Step3: Set up 4 slave containers ###"
 # delete old slave containers and start new slave containers
 i=1
@@ -55,7 +56,24 @@ done
 # docker exec master ./start-hadoop.sh &> /dev/null
 #
 echo "### Step4: Wait for hadoop up ###"
-sleep 20
+i=1
+while [ $i -lt 10 ]
+do
+    LIVE_NODES=$(docker exec master hdfs dfsadmin -report | grep "Live datanodes (4)" | wc -l)
+    if [ $LIVE_NODES = "1" ]; then
+        echo "hadoop is ready"
+        break
+    else
+        echo $(docker exec master hdfs dfsadmin -report | grep "Live datanodes")
+        i=$(( $i + 1 ))
+        sleep 5
+    fi
+done
+if [ $i = "10" ]; then
+    echo "hadoop can't be up, try to restart the slave node"
+	docker restart slave1 slave2 slave3 slave4
+fi
+
 i=1
 while [ $i -lt 10 ]
 do
@@ -74,7 +92,8 @@ if [ $i = "10" ]; then
     exit
 fi
 
-echo "### Step5: Run bigram count test ###"
-docker exec master ./run-bigramCount.sh
+echo "### Step5: Run word count test ###"
+docker exec master ./wordCount.sh
 
-# docker exec -it master /bin/bash
+echo "### Step6: Run bigram count test ###"
+docker exec master ./bigramCount.sh

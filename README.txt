@@ -4,7 +4,7 @@
  *
  * Date:   June 1, 2016
  *
- * Name:   Ying-zhi Wu
+ * Name:   Yingzhi Wu
  * PID:    A53102471
  * Email:  yiw376@eng.ucsd.edu
  *
@@ -17,3 +17,6 @@
 
 To run the demo script
 $ ./run.sh
+
+After checking the result, if you want to delete all containers and images, run the delete script
+$ ./delete.sh
